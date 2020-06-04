@@ -2,7 +2,7 @@ using KoyashiroKohaku.VrcMetaToolSharp;
 using System;
 using System.IO;
 
-namespace VrcMetaReader
+namespace KoyashiroKohaku.VrcMetaToolSharp.Reader
 {
     class Program
     {
@@ -10,7 +10,7 @@ namespace VrcMetaReader
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("VrcMetaReader.exeに画像ファイルをドラッグアンドドロップしてください。");
+                Console.WriteLine("VrcMetaToolSharp.Reader.exeに画像ファイルをドラッグアンドドロップしてください。");
                 Console.ReadLine();
             }
 
