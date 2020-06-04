@@ -1,6 +1,7 @@
 using System;
 using System.Buffers.Binary;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace KoyashiroKohaku.VrcMetaToolSharp
 {
@@ -35,6 +36,7 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
 
                 if (!Enum.IsDefined(typeof(ChunkType), chunkTypeUint))
                 {
+                    offset += 12 + chunkDataLength;
                     continue;
                 }
 
@@ -75,7 +77,35 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
                         }
                         break;
                     case ChunkType.User:
-                        vrcMetaData.Users.Add(chunkDataString);
+                        User user;
+                        if (chunkDataString.Contains(':'))
+                        {
+                            var match = new Regex(@"(?<userName>.*) : (?<twitterScreenName>@[0-9a-zA-Z_]*)").Match(chunkDataString);
+
+                            if (match.Success)
+                            {
+                                user = new User
+                                {
+                                    UserName = match.Groups["userName"].Value,
+                                    TwitterScreenName = match.Groups["twitterScreenName"].Value
+                                };
+                            }
+                            else
+                            {
+                                user = new User
+                                {
+                                    UserName = chunkDataString
+                                };
+                            }
+                        }
+                        else
+                        {
+                            user = new User
+                            {
+                                UserName = chunkDataString
+                            };
+                        }
+                        vrcMetaData.Users.Add(user);
                         break;
                 }
 

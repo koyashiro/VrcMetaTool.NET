@@ -49,9 +49,16 @@ namespace KoyashiroKohaku.VrcMetaToolSharp.Reader
                 Console.WriteLine($"World: {vrcMetaData.World}");
             }
 
-            foreach (var userName in vrcMetaData.Users)
+            foreach (var user in vrcMetaData.Users)
             {
-                Console.WriteLine($"User: {userName}");
+                if (user.HasTwitterScreenName)
+                {
+                    Console.WriteLine($"User: {user.UserName} : {user.TwitterScreenName}");
+                }
+                else
+                {
+                    Console.WriteLine($"User: {user.UserName}");
+                }
             }
 
             Console.ReadLine();
