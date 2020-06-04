@@ -7,6 +7,7 @@
     <Authors>Koyashiro Kohaku</Authors>
     <RepositoryUrl>https://github.com/KoyashiroKohaku/VrcMetaToolSharp</RepositoryUrl>
     <Company />
+    <RootNamespace>KoyashiroKohaku.VrcMetaToolSharp</RootNamespace>
   </PropertyGroup>
 
 </Project>
