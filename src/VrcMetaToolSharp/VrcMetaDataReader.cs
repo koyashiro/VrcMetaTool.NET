@@ -31,57 +31,52 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
             {
                 var chunkDataLength = BinaryPrimitives.ReadInt32BigEndian(span.Slice(offset + 4, 4));
 
-                ChunkType chunkType;
                 var chunkTypeUint = BinaryPrimitives.ReadUInt32BigEndian(span.Slice(offset + 8, 4));
-                if (Enum.IsDefined(typeof(ChunkType), chunkTypeUint))
+
+                if (!Enum.IsDefined(typeof(ChunkType), chunkTypeUint))
                 {
-                    chunkType = (ChunkType)chunkTypeUint;
-                }
-                else
-                {
-                    chunkType = ChunkType.Others;
+                    continue;
                 }
 
-                if (chunkType != ChunkType.Others)
-                {
-                    var chunkDataString = Encoding.UTF8.GetString(span.Slice(offset + 12, chunkDataLength));
+                var chunkType = (ChunkType)chunkTypeUint;
 
-                    switch (chunkType)
-                    {
-                        case ChunkType.Date:
-                            if (vrcMetaData.World is null)
-                            {
-                                vrcMetaData.Date = DateTime.ParseExact(chunkDataString, "yyyyMMddHHmmssfff", null);
-                            }
-                            else
-                            {
-                                throw new ArgumentException("Duplication error. There are two or more chunk types of 'vrCd'.");
-                            }
-                            break;
-                        case ChunkType.Photographer:
-                            if (vrcMetaData.Photographer is null)
-                            {
-                                vrcMetaData.Photographer = chunkDataString;
-                            }
-                            else
-                            {
-                                throw new ArgumentException("Duplication error. There are two or more chunk types of 'vrCp'.");
-                            }
-                            break;
-                        case ChunkType.World:
-                            if (vrcMetaData.World is null)
-                            {
-                                vrcMetaData.World = chunkDataString;
-                            }
-                            else
-                            {
-                                throw new ArgumentException("Duplication error. There are two or more chunk types of 'vrCw'.");
-                            }
-                            break;
-                        case ChunkType.User:
-                            vrcMetaData.Users.Add(chunkDataString);
-                            break;
-                    }
+                var chunkDataString = Encoding.UTF8.GetString(span.Slice(offset + 12, chunkDataLength));
+
+                switch (chunkType)
+                {
+                    case ChunkType.Date:
+                        if (vrcMetaData.World is null)
+                        {
+                            vrcMetaData.Date = DateTime.ParseExact(chunkDataString, "yyyyMMddHHmmssfff", null);
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Duplication error. There are two or more chunk types of 'vrCd'.");
+                        }
+                        break;
+                    case ChunkType.Photographer:
+                        if (vrcMetaData.Photographer is null)
+                        {
+                            vrcMetaData.Photographer = chunkDataString;
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Duplication error. There are two or more chunk types of 'vrCp'.");
+                        }
+                        break;
+                    case ChunkType.World:
+                        if (vrcMetaData.World is null)
+                        {
+                            vrcMetaData.World = chunkDataString;
+                        }
+                        else
+                        {
+                            throw new ArgumentException("Duplication error. There are two or more chunk types of 'vrCw'.");
+                        }
+                        break;
+                    case ChunkType.User:
+                        vrcMetaData.Users.Add(chunkDataString);
+                        break;
                 }
 
                 offset += 12 + chunkDataLength;
