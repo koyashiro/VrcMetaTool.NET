@@ -2,7 +2,7 @@ using KoyashiroKohaku.VrcMetaToolSharp;
 using System;
 using System.IO;
 
-namespace VrcMetaReader
+namespace KoyashiroKohaku.VrcMetaToolSharp.Reader
 {
     class Program
     {
@@ -10,7 +10,7 @@ namespace VrcMetaReader
         {
             if (args.Length == 0)
             {
-                Console.WriteLine("VrcMetaReader.exeに画像ファイルをドラッグアンドドロップしてください。");
+                Console.WriteLine("VrcMetaToolSharp.Reader.exeに画像ファイルをドラッグアンドドロップしてください。");
                 Console.ReadLine();
             }
 
@@ -49,9 +49,16 @@ namespace VrcMetaReader
                 Console.WriteLine($"World: {vrcMetaData.World}");
             }
 
-            foreach (var userName in vrcMetaData.Users)
+            foreach (var user in vrcMetaData.Users)
             {
-                Console.WriteLine($"User: {userName}");
+                if (user.HasTwitterScreenName)
+                {
+                    Console.WriteLine($"User: {user.UserName} : {user.TwitterScreenName}");
+                }
+                else
+                {
+                    Console.WriteLine($"User: {user.UserName}");
+                }
             }
 
             Console.ReadLine();
