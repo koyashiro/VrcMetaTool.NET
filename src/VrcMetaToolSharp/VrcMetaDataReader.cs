@@ -1,5 +1,6 @@
 using System;
 using System.Buffers.Binary;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -14,7 +15,7 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
         /// <summary>
         /// PNG画像のシグネチャ
         /// </summary>
-        private static readonly byte[] PngSignature = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+        private static ReadOnlySpan<byte> PngSignature => new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
 
         /// <summary>
         /// バイト配列がPNG画像のとき<see cref="true"/>を返します。
@@ -35,7 +36,7 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
                 return false;
             }
 
-            return span.Slice(0, 8).SequenceEqual(PngSignature.AsSpan());
+            return span.Slice(0, 8).SequenceEqual(PngSignature);
         }
 
         /// <summary>
@@ -53,7 +54,7 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
 
             var span = buffer.AsSpan();
 
-            if (!span[..8].SequenceEqual(PngSignature.AsSpan()))
+            if (!span[..8].SequenceEqual(PngSignature))
             {
                 throw new ArgumentException($"Argument error. argument: '{nameof(buffer)}' is broken or no png image binary.");
             }
