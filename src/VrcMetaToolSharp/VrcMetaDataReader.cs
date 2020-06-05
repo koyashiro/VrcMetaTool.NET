@@ -1,14 +1,90 @@
 using System;
 using System.Buffers.Binary;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 
 namespace KoyashiroKohaku.VrcMetaToolSharp
 {
+    /// <summary>
+    /// VrcMetaDataReader
+    /// </summary>
     public static class VrcMetaDataReader
     {
-        private static readonly byte[] PngSignature = new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
+        /// <summary>
+        /// PNG画像のシグネチャ
+        /// </summary>
+        private static ReadOnlySpan<byte> PngSignature => new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
 
+        /// <summary>
+        /// バイト配列がPNG画像のとき<see cref="true"/>を返します。
+        /// </summary>
+        /// <param name="buffer">バイト配列</param>
+        /// <returns>バイト配列がPNG画像のとき<see cref="true"/>, それいがいのとき<see cref="false"/></returns>
+        public static bool IsPng(byte[] buffer)
+        {
+            if (buffer is null)
+            {
+                throw new ArgumentNullException($"Argument error. argument: '{nameof(buffer)}' is null.");
+            }
+
+            var span = buffer.AsSpan();
+
+            if (span.Length < 8)
+            {
+                return false;
+            }
+
+            return span.Slice(0, 8).SequenceEqual(PngSignature);
+        }
+
+        /// <summary>
+        /// ファイルパスからPNG画像を読み込みmeta情報を抽出します。
+        /// </summary>
+        /// <param name="path">PNG画像のファイルパス</param>
+        /// <returns>meta情報</returns>
+        public static VrcMetaData Read(string path)
+        {
+            if (path is null)
+            {
+                throw new ArgumentNullException($"Argument error. argument: '{nameof(path)}' is null.");
+            }
+
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException($"File error. '{path}' does not exists.");
+            }
+
+            return Read(File.ReadAllBytes(path));
+        }
+
+        /// <summary>
+        /// ファイルパスからPNG画像を読み込みmeta情報を抽出します。
+        /// </summary>
+        /// <param name="path">PNG画像のファイルパス</param>
+        /// <returns>meta情報</returns>
+        public static async Task<VrcMetaData> ReadAsync(string path)
+        {
+            if (path is null)
+            {
+                throw new ArgumentNullException($"Argument error. argument: '{nameof(path)}' is null.");
+            }
+
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException($"File error. '{path}' does not exists.");
+            }
+
+            return await ReadAsync(await File.ReadAllBytesAsync(path));
+        }
+
+        /// <summary>
+        /// PNG画像のバイト配列からmeta情報を抽出します。
+        /// </summary>
+        /// <param name="buffer">バイト配列</param>
+        /// <returns>meta情報</returns>
         public static VrcMetaData Read(byte[] buffer)
         {
             #region Argument Check
@@ -19,7 +95,7 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
 
             var span = buffer.AsSpan();
 
-            if (!span[..8].SequenceEqual(PngSignature.AsSpan()))
+            if (!span[..8].SequenceEqual(PngSignature))
             {
                 throw new ArgumentException($"Argument error. argument: '{nameof(buffer)}' is broken or no png image binary.");
             }
@@ -114,5 +190,12 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
 
             return vrcMetaData;
         }
+
+        /// <summary>
+        /// PNG画像のバイナリデータからmeta情報を抽出します。
+        /// </summary>
+        /// <param name="buffer">PNG画像のバイナリ</param>
+        /// <returns>meta情報</returns>
+        public static Task<VrcMetaData> ReadAsync(byte[] buffer) => Task.Run(() => Read(buffer));
     }
 }
