@@ -44,7 +44,7 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
         /// ファイルパスからPNG画像を読み込みmeta情報を抽出します。
         /// </summary>
         /// <param name="path">PNG画像のファイルパス</param>
-        /// <returns>VrcMetaData</returns>
+        /// <returns>meta情報</returns>
         public static VrcMetaData Read(string path)
         {
             if (path is null)
@@ -64,7 +64,7 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
         /// PNG画像のバイト配列からmeta情報を抽出します。
         /// </summary>
         /// <param name="buffer">バイト配列</param>
-        /// <returns>VrcMetaData</returns>
+        /// <returns>meta情報</returns>
         public static VrcMetaData Read(byte[] buffer)
         {
             #region Argument Check
@@ -175,7 +175,7 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
         /// PNG画像のバイナリデータからmeta情報を抽出します。
         /// </summary>
         /// <param name="buffer">PNG画像のバイナリ</param>
-        /// <returns>VrcMetaData</returns>
+        /// <returns>meta情報</returns>
         public static Task<VrcMetaData> ReadAsync(byte[] buffer) => Task.Run(() => Read(buffer));
     }
 }
