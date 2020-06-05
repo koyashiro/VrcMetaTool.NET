@@ -61,6 +61,26 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
         }
 
         /// <summary>
+        /// ファイルパスからPNG画像を読み込みmeta情報を抽出します。
+        /// </summary>
+        /// <param name="path">PNG画像のファイルパス</param>
+        /// <returns>meta情報</returns>
+        public static async Task<VrcMetaData> ReadAsync(string path)
+        {
+            if (path is null)
+            {
+                throw new ArgumentNullException($"Argument error. argument: '{nameof(path)}' is null.");
+            }
+
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException($"File error. '{path}' does not exists.");
+            }
+
+            return await ReadAsync(await File.ReadAllBytesAsync(path));
+        }
+
+        /// <summary>
         /// PNG画像のバイト配列からmeta情報を抽出します。
         /// </summary>
         /// <param name="buffer">バイト配列</param>
