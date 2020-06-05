@@ -1,6 +1,7 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -37,6 +38,26 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
             }
 
             return span.Slice(0, 8).SequenceEqual(PngSignature);
+        }
+
+        /// <summary>
+        /// ファイルパスからPNG画像を読み込みmeta情報を抽出します。
+        /// </summary>
+        /// <param name="path">PNG画像のファイルパス</param>
+        /// <returns>VrcMetaData</returns>
+        public static VrcMetaData Read(string path)
+        {
+            if (path is null)
+            {
+                throw new ArgumentNullException($"Argument error. argument: '{nameof(path)}' is null.");
+            }
+
+            if (!File.Exists(path))
+            {
+                throw new FileNotFoundException($"File error. '{path}' does not exists.");
+            }
+
+            return Read(File.ReadAllBytes(path));
         }
 
         /// <summary>
