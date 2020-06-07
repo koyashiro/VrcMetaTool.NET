@@ -1,10 +1,13 @@
 using System;
 using System.Buffers.Binary;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using KoyashiroKohaku.PngMetaDataUtil;
 
 namespace KoyashiroKohaku.VrcMetaToolSharp
 {
@@ -19,25 +22,82 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
         private static ReadOnlySpan<byte> PngSignature => new byte[] { 0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A };
 
         /// <summary>
+        /// vrc_meta_toolで扱うChunk Type
+        /// </summary>
+        public static ReadOnlySpan<string> VrcMetaDataChunkTypes => new string[] { "vrCd", "vrCw", "vrCp", "vrCu" };
+
+        /// <summary>
         /// バイト配列がPNG画像のとき<see cref="true"/>を返します。
         /// </summary>
         /// <param name="buffer">バイト配列</param>
-        /// <returns>バイト配列がPNG画像のとき<see cref="true"/>, それいがいのとき<see cref="false"/></returns>
-        public static bool IsPng(byte[] buffer)
+        /// <returns>バイト配列がPNG画像のとき<see cref="true"/>, それ以外のとき<see cref="false"/></returns>
+        public static bool IsPng(ReadOnlySpan<byte> buffer)
         {
-            if (buffer is null)
+            if (buffer == null)
+            {
+                throw new ArgumentNullException($"argument error. argument: '{nameof(buffer)}' is null.");
+            }
+
+            return ChunkReader.IsPng(buffer);
+        }
+
+        /// <summary>
+        /// PNG画像のバイト配列からmeta情報を抽出します。
+        /// </summary>
+        /// <param name="buffer">バイト配列</param>
+        /// <returns>meta情報</returns>
+        public static VrcMetaData Read(ReadOnlySpan<byte> buffer)
+        {
+            #region Argument Check
+            if (buffer == null)
             {
                 throw new ArgumentNullException($"Argument error. argument: '{nameof(buffer)}' is null.");
             }
 
-            var span = buffer.AsSpan();
+            var span = buffer;
 
-            if (span.Length < 8)
+            if (!span[..8].SequenceEqual(PngSignature))
             {
-                return false;
+                throw new ArgumentException($"Argument error. argument: '{nameof(buffer)}' is broken or no png image binary.");
+            }
+            #endregion
+
+            var chunks = ChunkReader.GetChunks(buffer, ChunkTypeFilter.AdditionalChunkOnly);
+
+            var dateChunk = chunks.SingleOrDefault(c => c.TypeString == "vrCd");
+
+            DateTime? date;
+            if (dateChunk != null)
+            {
+                if (DateTime.TryParseExact(dateChunk.DataString, "yyyyMMddHHmmssfff", CultureInfo.CurrentCulture, DateTimeStyles.None, out var parsedDate))
+                {
+                    date = parsedDate;
+                }
+                else
+                {
+                    date = null;
+                }
+            }
+            else
+            {
+                date = null;
             }
 
-            return span.Slice(0, 8).SequenceEqual(PngSignature);
+            var worldChunk = chunks.SingleOrDefault(c => c.TypeString == "vrCw");
+
+            var photographerChunk = chunks.SingleOrDefault(c => c.TypeString == "vrCp");
+            var userChunks = chunks.Where(c => c.TypeString == "vrCu").ToList();
+
+            var vrcMetaData = new VrcMetaData
+            {
+                Date = date,
+                World = worldChunk.DataString,
+                Photographer = photographerChunk.DataString
+            };
+
+            vrcMetaData.Users.AddRange(userChunks.Select(c => new User(c.DataString)).ToList());
+
+            return vrcMetaData;
         }
 
         /// <summary>
@@ -78,117 +138,6 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
             }
 
             return await ReadAsync(await File.ReadAllBytesAsync(path));
-        }
-
-        /// <summary>
-        /// PNG画像のバイト配列からmeta情報を抽出します。
-        /// </summary>
-        /// <param name="buffer">バイト配列</param>
-        /// <returns>meta情報</returns>
-        public static VrcMetaData Read(byte[] buffer)
-        {
-            #region Argument Check
-            if (buffer is null)
-            {
-                throw new ArgumentNullException($"Argument error. argument: '{nameof(buffer)}' is null.");
-            }
-
-            var span = buffer.AsSpan();
-
-            if (!span[..8].SequenceEqual(PngSignature))
-            {
-                throw new ArgumentException($"Argument error. argument: '{nameof(buffer)}' is broken or no png image binary.");
-            }
-            #endregion
-
-            var vrcMetaData = new VrcMetaData();
-
-            var offset = 4;
-            while (offset + 8 < span.Length)
-            {
-                var chunkDataLength = BinaryPrimitives.ReadInt32BigEndian(span.Slice(offset + 4, 4));
-
-                var chunkTypeUint = BinaryPrimitives.ReadUInt32BigEndian(span.Slice(offset + 8, 4));
-
-                if (!Enum.IsDefined(typeof(ChunkType), chunkTypeUint))
-                {
-                    offset += 12 + chunkDataLength;
-                    continue;
-                }
-
-                var chunkType = (ChunkType)chunkTypeUint;
-
-                var chunkDataString = Encoding.UTF8.GetString(span.Slice(offset + 12, chunkDataLength));
-
-                switch (chunkType)
-                {
-                    case ChunkType.Date:
-                        if (vrcMetaData.World is null)
-                        {
-                            vrcMetaData.Date = DateTime.ParseExact(chunkDataString, "yyyyMMddHHmmssfff", null);
-                        }
-                        else
-                        {
-                            throw new ArgumentException("Duplication error. There are two or more chunk types of 'vrCd'.");
-                        }
-                        break;
-                    case ChunkType.Photographer:
-                        if (vrcMetaData.Photographer is null)
-                        {
-                            vrcMetaData.Photographer = chunkDataString;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("Duplication error. There are two or more chunk types of 'vrCp'.");
-                        }
-                        break;
-                    case ChunkType.World:
-                        if (vrcMetaData.World is null)
-                        {
-                            vrcMetaData.World = chunkDataString;
-                        }
-                        else
-                        {
-                            throw new ArgumentException("Duplication error. There are two or more chunk types of 'vrCw'.");
-                        }
-                        break;
-                    case ChunkType.User:
-                        User user;
-                        if (chunkDataString.Contains(':'))
-                        {
-                            var match = new Regex(@"(?<userName>.*) : (?<twitterScreenName>@[0-9a-zA-Z_]*)").Match(chunkDataString);
-
-                            if (match.Success)
-                            {
-                                user = new User
-                                {
-                                    UserName = match.Groups["userName"].Value,
-                                    TwitterScreenName = match.Groups["twitterScreenName"].Value
-                                };
-                            }
-                            else
-                            {
-                                user = new User
-                                {
-                                    UserName = chunkDataString
-                                };
-                            }
-                        }
-                        else
-                        {
-                            user = new User
-                            {
-                                UserName = chunkDataString
-                            };
-                        }
-                        vrcMetaData.Users.Add(user);
-                        break;
-                }
-
-                offset += 12 + chunkDataLength;
-            }
-
-            return vrcMetaData;
         }
 
         /// <summary>
