@@ -91,8 +91,8 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
             var vrcMetaData = new VrcMetaData
             {
                 Date = date,
-                World = worldChunk.DataString,
-                Photographer = photographerChunk.DataString
+                World = worldChunk?.DataString,
+                Photographer = photographerChunk?.DataString
             };
 
             vrcMetaData.Users.AddRange(userChunks.Select(c => new User(c.DataString)).ToList());
