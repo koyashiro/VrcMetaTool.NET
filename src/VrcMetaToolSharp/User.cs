@@ -1,3 +1,6 @@
+using System;
+using System.Text.RegularExpressions;
+
 namespace KoyashiroKohaku.VrcMetaToolSharp
 {
     /// <summary>
@@ -5,6 +8,31 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
     /// </summary>
     public class User
     {
+        public User()
+        {
+
+        }
+
+        public User(string userName)
+        {
+            if (userName == null)
+            {
+                throw new ArgumentNullException();
+            }
+
+            var match = new Regex(@"(?<userName>.*) : (?<twitterScreenName>@[0-9a-zA-Z_]*)").Match(userName);
+
+            if (match.Success)
+            {
+                UserName = match.Groups["userName"].Value;
+                TwitterScreenName = match.Groups["twitterScreenName"].Value;
+            }
+            else
+            {
+                UserName = userName;
+            }
+        }
+
         /// <summary>
         /// VRCのdisplay name
         /// </summary>
@@ -19,5 +47,17 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
         /// <see cref="TwitterScreenName"/>が格納されているときに<see cref="true"/>を返します。
         /// </summary>
         public bool HasTwitterScreenName => TwitterScreenName != null;
+
+        public override string ToString()
+        {
+            if (HasTwitterScreenName)
+            {
+                return $"{UserName} : {TwitterScreenName}";
+            }
+            else
+            {
+                return UserName;
+            }
+        }
     }
 }
