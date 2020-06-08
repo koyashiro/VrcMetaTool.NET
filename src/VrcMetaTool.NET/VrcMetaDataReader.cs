@@ -9,7 +9,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using KoyashiroKohaku.PngMetaDataUtil;
 
-namespace KoyashiroKohaku.VrcMetaToolSharp
+namespace KoyashiroKohaku.VrcMetaTool
 {
     /// <summary>
     /// VrcMetaDataReader

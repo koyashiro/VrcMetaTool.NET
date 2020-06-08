@@ -2,9 +2,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30114.105
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VrcMetaToolSharp", "src\VrcMetaToolSharp\VrcMetaToolSharp.csproj", "{FD77E45E-550E-4C96-875D-5F52C8EEA12B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VrcMetaTool.NET", "src\VrcMetaTool.NET\VrcMetaTool.NET.csproj", "{FD77E45E-550E-4C96-875D-5F52C8EEA12B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VrcMetaToolSharp.Reader", "src\VrcMetaToolSharp.Reader\VrcMetaToolSharp.Reader.csproj", "{8CF3F948-9879-4D68-8324-B24BCD2C3D29}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VrcMetaTool.NET.Reader", "src\VrcMetaTool.NET.Reader\VrcMetaTool.NET.Reader.csproj", "{8CF3F948-9879-4D68-8324-B24BCD2C3D29}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

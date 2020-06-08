@@ -5,9 +5,9 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Version>0.1.3</Version>
     <Authors>Koyashiro Kohaku</Authors>
-    <RepositoryUrl>https://github.com/KoyashiroKohaku/VrcMetaToolSharp</RepositoryUrl>
+    <RepositoryUrl>https://github.com/KoyashiroKohaku/VrcMetaTool.NET</RepositoryUrl>
     <Company />
-    <RootNamespace>KoyashiroKohaku.VrcMetaToolSharp</RootNamespace>
+    <RootNamespace>KoyashiroKohaku.VrcMetaTool</RootNamespace>
   </PropertyGroup>
 
   <ItemGroup>

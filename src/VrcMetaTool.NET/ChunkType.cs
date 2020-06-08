@@ -1,4 +1,4 @@
-namespace KoyashiroKohaku.VrcMetaToolSharp
+namespace KoyashiroKohaku.VrcMetaTool
 {
     public enum ChunkType : uint
     {
