@@ -1,0 +1,3 @@
+[submodule "PngChunkUtil"]
+	path = src/PngChunkUtil
+	url = git@github.com:KoyashiroKohaku/PngChunkUtil.git

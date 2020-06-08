@@ -10,4 +10,8 @@
     <RootNamespace>KoyashiroKohaku.VrcMetaTool</RootNamespace>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PngChunkUtil\src\PngChunkUtil\PngChunkUtil.csproj" />
+  </ItemGroup>
+
 </Project>
