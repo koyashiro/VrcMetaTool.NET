@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.1</TargetFramework>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Version>0.1.3</Version>
+    <Version>0.1.4</Version>
     <Authors>Koyashiro Kohaku</Authors>
     <RepositoryUrl>https://github.com/KoyashiroKohaku/VrcMetaTool.NET</RepositoryUrl>
     <Company />
