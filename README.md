@@ -1,1 +1,1 @@
-# VrcMetaToolSharp
+# VrcMetaTool.NET

@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using KoyashiroKohaku.PngMetaDataUtil;
+using KoyashiroKohaku.PngChunkUtil;
 
-namespace KoyashiroKohaku.VrcMetaToolSharp
+namespace KoyashiroKohaku.VrcMetaTool
 {
     /// <summary>
     /// VrcMetaDataWriter

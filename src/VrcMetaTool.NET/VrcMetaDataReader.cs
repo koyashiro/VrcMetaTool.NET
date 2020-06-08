@@ -7,9 +7,9 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using KoyashiroKohaku.PngMetaDataUtil;
+using KoyashiroKohaku.PngChunkUtil;
 
-namespace KoyashiroKohaku.VrcMetaToolSharp
+namespace KoyashiroKohaku.VrcMetaTool
 {
     /// <summary>
     /// VrcMetaDataReader
@@ -91,8 +91,8 @@ namespace KoyashiroKohaku.VrcMetaToolSharp
             var vrcMetaData = new VrcMetaData
             {
                 Date = date,
-                World = worldChunk.DataString,
-                Photographer = photographerChunk.DataString
+                World = worldChunk?.DataString,
+                Photographer = photographerChunk?.DataString
             };
 
             vrcMetaData.Users.AddRange(userChunks.Select(c => new User(c.DataString)).ToList());
