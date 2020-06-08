@@ -10,8 +10,4 @@
     <RootNamespace>KoyashiroKohaku.VrcMetaTool</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="PngMetaDataUtil" Version="0.1.4" />
-  </ItemGroup>
-
 </Project>
