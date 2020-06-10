@@ -16,12 +16,12 @@ namespace KoyashiroKohaku.VrcMetaTool
         /// <summary>
         /// 撮影者
         /// </summary>
-        public string Photographer { get; set; }
+        public string? Photographer { get; set; }
 
         /// <summary>
         /// ワールド名
         /// </summary>
-        public string World { get; set; }
+        public string? World { get; set; }
 
         /// <summary>
         /// ユーザ情報を格納するリスト

@@ -1,13 +1,10 @@
 using System;
-using System.Buffers.Binary;
-using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using KoyashiroKohaku.PngChunkUtil;
+using KoyashiroKohaku.VrcMetaTool.Properties;
 
 namespace KoyashiroKohaku.VrcMetaTool
 {
@@ -35,7 +32,7 @@ namespace KoyashiroKohaku.VrcMetaTool
         {
             if (buffer == null)
             {
-                throw new ArgumentNullException($"argument error. argument: '{nameof(buffer)}' is null.");
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             return ChunkReader.IsPng(buffer);
@@ -51,14 +48,14 @@ namespace KoyashiroKohaku.VrcMetaTool
             #region Argument Check
             if (buffer == null)
             {
-                throw new ArgumentNullException($"Argument error. argument: '{nameof(buffer)}' is null.");
+                throw new ArgumentNullException(nameof(buffer));
             }
 
             var span = buffer;
 
             if (!span[..8].SequenceEqual(PngSignature))
             {
-                throw new ArgumentException($"Argument error. argument: '{nameof(buffer)}' is broken or no png image binary.");
+                throw new ArgumentException(Resources.VrcMetaReader_Read_ArgumentException, nameof(buffer));
             }
             #endregion
 
@@ -107,14 +104,14 @@ namespace KoyashiroKohaku.VrcMetaTool
         /// <returns>meta情報</returns>
         public static VrcMetaData Read(string path)
         {
-            if (path is null)
+            if (path == null)
             {
-                throw new ArgumentNullException($"Argument error. argument: '{nameof(path)}' is null.");
+                throw new ArgumentNullException(nameof(path));
             }
 
             if (!File.Exists(path))
             {
-                throw new FileNotFoundException($"File error. '{path}' does not exists.");
+                throw new FileNotFoundException(path);
             }
 
             return Read(File.ReadAllBytes(path));
@@ -127,17 +124,17 @@ namespace KoyashiroKohaku.VrcMetaTool
         /// <returns>meta情報</returns>
         public static async Task<VrcMetaData> ReadAsync(string path)
         {
-            if (path is null)
+            if (path == null)
             {
-                throw new ArgumentNullException($"Argument error. argument: '{nameof(path)}' is null.");
+                throw new ArgumentNullException(nameof(path));
             }
 
             if (!File.Exists(path))
             {
-                throw new FileNotFoundException($"File error. '{path}' does not exists.");
+                throw new FileNotFoundException(path);
             }
 
-            return await ReadAsync(await File.ReadAllBytesAsync(path));
+            return await ReadAsync(await File.ReadAllBytesAsync(path).ConfigureAwait(false)).ConfigureAwait(false);
         }
 
         /// <summary>
