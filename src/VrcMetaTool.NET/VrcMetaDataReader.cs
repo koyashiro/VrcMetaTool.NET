@@ -1,10 +1,10 @@
+using KoyashiroKohaku.PngChunkUtil;
+using KoyashiroKohaku.VrcMetaTool.Properties;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using KoyashiroKohaku.PngChunkUtil;
-using KoyashiroKohaku.VrcMetaTool.Properties;
 
 namespace KoyashiroKohaku.VrcMetaTool
 {
@@ -155,6 +155,12 @@ namespace KoyashiroKohaku.VrcMetaTool
             return Read(File.ReadAllBytes(path));
         }
 
+        /// <summary>
+        /// ファイルパスからPNG画像を読み込みmeta情報を抽出します。
+        /// </summary>
+        /// <param name="path"></param>
+        /// <param name="vrcMetaData"></param>
+        /// <returns></returns>
         public static bool TryRead(string path, out VrcMetaData? vrcMetaData)
         {
             if (path == null)
@@ -169,18 +175,7 @@ namespace KoyashiroKohaku.VrcMetaTool
                 return false;
             }
 
-            byte[] buffer;
-            try
-            {
-                buffer = File.ReadAllBytes(path);
-            }
-            catch (Exception)
-            {
-                vrcMetaData = null;
-                return false;
-            }
-
-            return TryRead(buffer, out vrcMetaData);
+            return TryRead(File.ReadAllBytes(path), out vrcMetaData);
         }
 
         /// <summary>

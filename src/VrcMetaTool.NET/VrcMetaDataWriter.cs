@@ -1,8 +1,8 @@
+using KoyashiroKohaku.PngChunkUtil;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
-using KoyashiroKohaku.PngChunkUtil;
 
 namespace KoyashiroKohaku.VrcMetaTool
 {
@@ -47,9 +47,9 @@ namespace KoyashiroKohaku.VrcMetaTool
                 chunks.Insert(chunks.Count - 1, new Chunk(VrcMetaChunk.ConvertToString(VrcMetaChunk.UserChunk), user.ToString()));
             }
 
-            return ChunkWriter.WriteImage(chunks.ToArray());
+            return ChunkWriter.WriteImageBytes(chunks.ToArray());
         }
-        
+
         /// <summary>
         ///  PNG画像のバイト配列からmeta情報を書き込んだバイト配列を作成します。
         /// </summary>

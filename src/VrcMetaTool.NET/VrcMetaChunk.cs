@@ -1,6 +1,5 @@
 using KoyashiroKohaku.VrcMetaTool.Properties;
 using System;
-using System.Collections.Generic;
 using System.Text;
 
 namespace KoyashiroKohaku.VrcMetaTool
