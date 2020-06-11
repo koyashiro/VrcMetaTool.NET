@@ -8,16 +8,11 @@ namespace KoyashiroKohaku.VrcMetaTool
     /// </summary>
     public class User
     {
-        public User()
-        {
-
-        }
-
         public User(string userName)
         {
             if (userName == null)
             {
-                throw new ArgumentNullException();
+                throw new ArgumentNullException(nameof(userName));
             }
 
             var match = new Regex(@"(?<userName>.*) : (?<twitterScreenName>@[0-9a-zA-Z_]*)").Match(userName);
@@ -41,7 +36,7 @@ namespace KoyashiroKohaku.VrcMetaTool
         /// <summary>
         /// Twitterのscreen name
         /// </summary>
-        public string TwitterScreenName { get; set; }
+        public string? TwitterScreenName { get; set; }
 
         /// <summary>
         /// <see cref="TwitterScreenName"/>が格納されているときに<see cref="true"/>を返します。
