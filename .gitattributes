@@ -1,5 +1,9 @@
 * text=auto
 
-*.cs text=auto eol=lf
-*.csproj text=auto eol=lf
-*.sln text=auto eol=lf
+*.cs text eol=crlf
+*.Designer.cs text eol=crlf
+*.csproj text eol=crlf
+*.sln text eol=crlf
+*.resx text eol=crlf
+*.png -text
+*.jpg -text
