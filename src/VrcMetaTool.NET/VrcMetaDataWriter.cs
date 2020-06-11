@@ -26,18 +26,20 @@ namespace KoyashiroKohaku.VrcMetaTool
 
             var chunks = ChunkReader.GetChunks(image);
 
-            foreach (var chunk in chunks.Where(c => c.TypeString == "vrCd" || c.TypeString == "vrCw" || c.TypeString == "vrCp" || c.TypeString == "vrCu").ToArray())
+            // 既存のmeta情報を削除
+            foreach (var chunk in chunks.Where(c => VrcMetaChunk.IsVrcMetaChunk(c.TypePart)).ToArray())
             {
                 chunks.Remove(chunk);
             }
 
-            chunks.Insert(chunks.Count - 1, new Chunk("vrCd", vrcMetaData.Date?.ToString("yyyyMMddHHmmssfff", new CultureInfo("ja-JP", false))));
-            chunks.Insert(chunks.Count - 1, new Chunk("vrCw", vrcMetaData.World));
-            chunks.Insert(chunks.Count - 1, new Chunk("vrCp", vrcMetaData.Photographer));
+            // 受け取ったmeta情報を末尾に追加
+            chunks.Insert(chunks.Count - 1, new Chunk(VrcMetaChunk.ConvertToString(VrcMetaChunk.DateChunk), vrcMetaData.Date?.ToString("yyyyMMddHHmmssfff", new CultureInfo("en", false))));
+            chunks.Insert(chunks.Count - 1, new Chunk(VrcMetaChunk.ConvertToString(VrcMetaChunk.WorldChunk), vrcMetaData.World));
+            chunks.Insert(chunks.Count - 1, new Chunk(VrcMetaChunk.ConvertToString(VrcMetaChunk.PhotographerChunk), vrcMetaData.Photographer));
 
             foreach (var user in vrcMetaData.Users)
             {
-                chunks.Insert(chunks.Count - 1, new Chunk("vrCu", user.ToString()));
+                chunks.Insert(chunks.Count - 1, new Chunk(VrcMetaChunk.ConvertToString(VrcMetaChunk.UserChunk), user.ToString()));
             }
 
             return ChunkWriter.WriteImage(chunks.ToArray());
@@ -53,12 +55,17 @@ namespace KoyashiroKohaku.VrcMetaTool
         {
             if (path == null)
             {
-                throw new ArgumentNullException($"{nameof(path)}");
+                throw new ArgumentNullException(nameof(path));
             }
 
             if (!File.Exists(path))
             {
-                throw new FileNotFoundException($"{path}");
+                throw new FileNotFoundException(path);
+            }
+
+            if (vrcMetaData == null)
+            {
+                throw new ArgumentNullException(nameof(vrcMetaData));
             }
 
             return Write(File.ReadAllBytes(path), vrcMetaData);
