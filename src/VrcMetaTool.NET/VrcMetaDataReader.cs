@@ -25,7 +25,7 @@ namespace KoyashiroKohaku.VrcMetaTool
                 throw new ArgumentNullException(nameof(buffer));
             }
 
-            return ChunkReader.IsPng(buffer);
+            return PngUtil.IsPng(buffer);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace KoyashiroKohaku.VrcMetaTool
                 throw new ArgumentException(Resources.VrcMetaReader_Read_ArgumentException, nameof(buffer));
             }
 
-            var chunks = ChunkReader.GetChunks(buffer, ChunkTypeFilter.AdditionalChunkOnly);
+            var chunks = ChunkReader.SplitChunks(buffer, ChunkTypeFilter.AdditionalChunkOnly);
 
             var vrcMetaData = new VrcMetaData();
 
@@ -72,10 +72,61 @@ namespace KoyashiroKohaku.VrcMetaTool
             var photographerChunk = chunks.FirstOrDefault(c => c.TypePart.SequenceEqual(VrcMetaChunk.PhotographerChunk));
             vrcMetaData.Photographer = photographerChunk?.DataString;
 
-            var users = chunks.Where(c => c.TypePart.SequenceEqual(VrcMetaChunk.UserChunk));
-            vrcMetaData.Users.AddRange(chunks.Select(c => new User(c.DataString)));
+            var users = chunks.Where(c => c.TypePart.SequenceEqual(VrcMetaChunk.UserChunk)).ToArray();
+            vrcMetaData.Users.AddRange(users.Select(c => new User(c.DataString)));
 
             return vrcMetaData;
+        }
+
+        public static bool TryRead(ReadOnlySpan<byte> buffer, out VrcMetaData? vrcMetaData)
+        {
+            if (buffer == null)
+            {
+                vrcMetaData = null;
+                return false;
+            }
+
+            if (!PngUtil.IsPng(buffer))
+            {
+                vrcMetaData = null;
+                return false;
+            }
+
+            if (!ChunkReader.TrySplitChunks(buffer, out var chunks, ChunkTypeFilter.AdditionalChunkOnly))
+            {
+                vrcMetaData = null;
+                return false;
+            }
+
+            vrcMetaData = new VrcMetaData();
+
+            var dateChunk = chunks.FirstOrDefault(c => c.TypePart.SequenceEqual(VrcMetaChunk.DateChunk));
+            if (dateChunk != null)
+            {
+                if (DateTime.TryParseExact(dateChunk.DataString, "yyyyMMddHHmmssfff", new CultureInfo("en", false), DateTimeStyles.None, out var parsedDate))
+                {
+                    vrcMetaData.Date = parsedDate;
+                }
+                else
+                {
+                    vrcMetaData.Date = null;
+                }
+            }
+            else
+            {
+                vrcMetaData.Date = null;
+            }
+
+            var worldChunk = chunks.FirstOrDefault(c => c.TypePart.SequenceEqual(VrcMetaChunk.WorldChunk));
+            vrcMetaData.World = worldChunk?.DataString;
+
+            var photographerChunk = chunks.FirstOrDefault(c => c.TypePart.SequenceEqual(VrcMetaChunk.PhotographerChunk));
+            vrcMetaData.Photographer = photographerChunk?.DataString;
+
+            var users = chunks.Where(c => c.TypePart.SequenceEqual(VrcMetaChunk.UserChunk)).ToArray();
+            vrcMetaData.Users.AddRange(users.Select(c => new User(c.DataString)));
+
+            return true;
         }
 
         /// <summary>
@@ -96,6 +147,34 @@ namespace KoyashiroKohaku.VrcMetaTool
             }
 
             return Read(File.ReadAllBytes(path));
+        }
+
+        public static bool TryRead(string path, out VrcMetaData? vrcMetaData)
+        {
+            if (path == null)
+            {
+                vrcMetaData = null;
+                return false;
+            }
+
+            if (!File.Exists(path))
+            {
+                vrcMetaData = null;
+                return false;
+            }
+
+            byte[] buffer;
+            try
+            {
+                buffer = File.ReadAllBytes(path);
+            }
+            catch (Exception)
+            {
+                vrcMetaData = null;
+                return false;
+            }
+
+            return TryRead(buffer, out vrcMetaData);
         }
 
         /// <summary>

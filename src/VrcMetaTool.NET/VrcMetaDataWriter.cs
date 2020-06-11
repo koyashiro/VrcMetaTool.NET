@@ -19,12 +19,17 @@ namespace KoyashiroKohaku.VrcMetaTool
         /// <returns>meta情報を書き込んだバイト配列</returns>
         public static byte[] Write(ReadOnlySpan<byte> image, VrcMetaData vrcMetaData)
         {
+            if (image == null)
+            {
+                throw new ArgumentNullException(nameof(vrcMetaData));
+            }
+
             if (vrcMetaData == null)
             {
                 throw new ArgumentNullException(nameof(vrcMetaData));
             }
 
-            var chunks = ChunkReader.GetChunks(image);
+            var chunks = ChunkReader.SplitChunks(image);
 
             // 既存のmeta情報を削除
             foreach (var chunk in chunks.Where(c => VrcMetaChunk.IsVrcMetaChunk(c.TypePart)).ToArray())
