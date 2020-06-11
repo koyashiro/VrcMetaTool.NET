@@ -126,6 +126,12 @@ namespace KoyashiroKohaku.VrcMetaTool
             var users = chunks.Where(c => c.TypePart.SequenceEqual(VrcMetaChunk.UserChunk)).ToArray();
             vrcMetaData.Users.AddRange(users.Select(c => new User(c.DataString)));
 
+            if (vrcMetaData.Date == null && vrcMetaData.World == null && vrcMetaData.Photographer == null && !vrcMetaData.Users.Any())
+            {
+                vrcMetaData = null;
+                return false;
+            }
+
             return true;
         }
 
