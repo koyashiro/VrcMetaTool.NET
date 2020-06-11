@@ -6,7 +6,6 @@
     <Version>0.1.5</Version>
     <Authors>Koyashiro Kohaku</Authors>
     <RepositoryUrl>https://github.com/KoyashiroKohaku/VrcMetaTool.NET</RepositoryUrl>
-    <Company />
     <RootNamespace>KoyashiroKohaku.VrcMetaTool</RootNamespace>
     <Nullable>enable</Nullable>
     <NeutralLanguage>en</NeutralLanguage>
