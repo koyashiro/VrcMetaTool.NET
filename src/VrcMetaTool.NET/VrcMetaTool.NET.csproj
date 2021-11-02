@@ -5,7 +5,7 @@
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <Version>0.1.8</Version>
     <Authors>Koyashiro Kohaku</Authors>
-    <RepositoryUrl>https://github.com/KoyashiroKohaku/VrcMetaTool.NET</RepositoryUrl>
+    <RepositoryUrl>https://github.com/koyashiro/VrcMetaTool.NET</RepositoryUrl>
     <RootNamespace>KoyashiroKohaku.VrcMetaTool</RootNamespace>
     <Nullable>enable</Nullable>
     <NeutralLanguage>en</NeutralLanguage>
