@@ -15,53 +15,7 @@ namespace KoyashiroKohaku.VrcMetaTool.Png
         private static readonly Range CRC_TARGET_RANGE = 4..^4;
         private static readonly Range CRC_RANGE = ^4..;
 
-
         private byte[] _buffer;
-
-        public Chunk(ReadOnlySpan<byte> buffer)
-        {
-            if (buffer == null)
-            {
-                throw new ArgumentNullException(nameof(buffer));
-            }
-
-            _buffer = buffer.ToArray();
-        }
-
-        public Chunk(ReadOnlySpan<byte> chunkType, ReadOnlySpan<byte> chunkData)
-        {
-            if (chunkType.Length != 4)
-            {
-                throw new ArgumentException();
-            }
-
-            _buffer = new byte[12 + chunkData.Length];
-
-            var buffer = _buffer.AsSpan();
-            BinaryPrimitives.WriteInt32BigEndian(buffer[LENGTH_RANGE], chunkData.Length);
-            chunkType.CopyTo(buffer[CHUNK_TYPE_RANGE]);
-            chunkData.CopyTo(buffer[CHUNK_DATA_RANGE]);
-            BinaryPrimitives.WriteUInt32BigEndian(buffer[CRC_RANGE], Crc32.Compute(buffer[CRC_TARGET_RANGE]));
-        }
-
-        public Chunk(string chunkType, string chunkData)
-        {
-            var chunkTypeBytes = Encoding.UTF8.GetBytes(chunkType);
-            var chunkDataBytes = string.IsNullOrEmpty(chunkData) ? Array.Empty<byte>() : Encoding.UTF8.GetBytes(chunkData);
-
-            if (chunkTypeBytes.Length != 4)
-            {
-                throw new ArgumentException();
-            }
-
-            _buffer = new byte[12 + chunkDataBytes.Length];
-
-            var buffer = _buffer.AsSpan();
-            BinaryPrimitives.WriteInt32BigEndian(buffer[LENGTH_RANGE], chunkDataBytes.Length);
-            chunkTypeBytes.CopyTo(buffer[CHUNK_TYPE_RANGE]);
-            chunkDataBytes.CopyTo(buffer[CHUNK_DATA_RANGE]);
-            BinaryPrimitives.WriteUInt32BigEndian(buffer[CRC_RANGE], Crc32.Compute(buffer[CRC_TARGET_RANGE]));
-        }
 
         public ReadOnlySpan<byte> Bytes => _buffer;
         public ReadOnlySpan<byte> LengthBytes => _buffer[LENGTH_RANGE];
@@ -73,6 +27,93 @@ namespace KoyashiroKohaku.VrcMetaTool.Png
         public string ChunkType => Encoding.UTF8.GetString(ChunkTypeBytes);
         public string ChunkData => Encoding.UTF8.GetString(ChunkDataBytes);
         public int Crc => BinaryPrimitives.ReadInt32BigEndian(CrcBytes);
+
+        public static Chunk Parse(ReadOnlySpan<byte> buffer)
+        {
+            if (buffer.Length < 4)
+            {
+                throw new ArgumentException();
+            }
+
+            var chunkDataLength = BinaryPrimitives.ReadInt32BigEndian(buffer[LENGTH_RANGE]);
+            if (buffer.Length != chunkDataLength + 12)
+            {
+                throw new ArgumentException();
+            }
+
+            return new Chunk { _buffer = buffer.ToArray() };
+        }
+
+        public static bool TryParse(ReadOnlySpan<byte> buffer, out Chunk chunk)
+        {
+            if (buffer.Length < 4)
+            {
+                chunk = default;
+                return false;
+            }
+
+            var chunkDataLength = BinaryPrimitives.ReadInt32BigEndian(buffer[LENGTH_RANGE]);
+            if (buffer.Length != chunkDataLength + 12)
+            {
+                chunk = default;
+                return false;
+            }
+
+            chunk = new Chunk { _buffer = buffer.ToArray() };
+            return true;
+        }
+
+        public static Chunk Create(ReadOnlySpan<byte> chunkType, ReadOnlySpan<byte> chunkData)
+        {
+            if (chunkType.Length != 4)
+            {
+                throw new ArgumentException();
+            }
+
+            var buffer = new byte[12 + chunkData.Length];
+            var span = buffer.AsSpan();
+            BinaryPrimitives.WriteInt32BigEndian(span[LENGTH_RANGE], chunkData.Length);
+            chunkType.CopyTo(span[CHUNK_TYPE_RANGE]);
+            chunkData.CopyTo(span[CHUNK_DATA_RANGE]);
+            BinaryPrimitives.WriteUInt32BigEndian(span[CRC_RANGE], Crc32.Compute(span[CRC_TARGET_RANGE]));
+
+            return new Chunk { _buffer = buffer };
+        }
+
+        public static bool TryCreate(ReadOnlySpan<byte> chunkType, ReadOnlySpan<byte> chunkData, out Chunk chunk)
+        {
+            if (chunkType.Length != 4)
+            {
+                chunk = default;
+                return false;
+            }
+
+            var buffer = new byte[12 + chunkData.Length];
+            var span = buffer.AsSpan();
+            BinaryPrimitives.WriteInt32BigEndian(span[LENGTH_RANGE], chunkData.Length);
+            chunkType.CopyTo(span[CHUNK_TYPE_RANGE]);
+            chunkData.CopyTo(span[CHUNK_DATA_RANGE]);
+            BinaryPrimitives.WriteUInt32BigEndian(span[CRC_RANGE], Crc32.Compute(span[CRC_TARGET_RANGE]));
+
+            chunk = new Chunk { _buffer = buffer };
+            return true;
+        }
+
+        public static Chunk Create(string chunkType, string chunkData)
+        {
+            var chunkTypeBytes = Encoding.UTF8.GetBytes(chunkType);
+            var chunkDataBytes = string.IsNullOrEmpty(chunkData) ? Array.Empty<byte>() : Encoding.UTF8.GetBytes(chunkData);
+
+            return Create(chunkTypeBytes, chunkDataBytes);
+        }
+
+        public static bool TryCreate(string chunkType, string chunkData, out Chunk chunk)
+        {
+            var chunkTypeBytes = Encoding.UTF8.GetBytes(chunkType);
+            var chunkDataBytes = string.IsNullOrEmpty(chunkData) ? Array.Empty<byte>() : Encoding.UTF8.GetBytes(chunkData);
+
+            return TryCreate(chunkTypeBytes, chunkDataBytes, out chunk);
+        }
 
         public bool IsValid()
         {
