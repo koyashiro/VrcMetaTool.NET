@@ -1,4 +1,3 @@
-using Koyashiro.VrcMetaTool.Properties;
 using System;
 using System.Text;
 
@@ -40,7 +39,7 @@ namespace Koyashiro.VrcMetaTool
 
             if (chunkType.Length != 4)
             {
-                throw new ArgumentException(Resources.VrcMetaChunk_IsVrcMetaChunk_ArgumentException, nameof(chunkType));
+                throw new ArgumentException("invalid chunk type");
             }
 
             return chunkType.SequenceEqual(DateChunk)
@@ -64,7 +63,7 @@ namespace Koyashiro.VrcMetaTool
 
             if (chunkType.Length != 4)
             {
-                throw new ArgumentException(Resources.VrcMetaChunk_IsVrcMetaChunk_ArgumentException, nameof(chunkType));
+                throw new ArgumentException("invalid chunk type");
             }
 
             if (encoding == null)
