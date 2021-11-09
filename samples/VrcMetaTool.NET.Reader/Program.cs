@@ -1,8 +1,8 @@
-using KoyashiroKohaku.VrcMetaTool;
+using Koyashiro.VrcMetaTool;
 using System;
 using System.IO;
 
-namespace KoyashiroKohaku.VrcMetaTool.Reader
+namespace Koyashiro.VrcMetaTool.Reader
 {
     class Program
     {

@@ -1,8 +1,8 @@
-using KoyashiroKohaku.VrcMetaTool.Properties;
+using Koyashiro.VrcMetaTool.Properties;
 using System;
 using System.Text;
 
-namespace KoyashiroKohaku.VrcMetaTool
+namespace Koyashiro.VrcMetaTool
 {
     public static class VrcMetaChunk
     {

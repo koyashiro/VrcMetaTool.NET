@@ -3,7 +3,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 
-namespace KoyashiroKohaku.VrcMetaTool
+namespace Koyashiro.VrcMetaTool
 {
     /// <summary>
     /// VrcMetaDataWriter

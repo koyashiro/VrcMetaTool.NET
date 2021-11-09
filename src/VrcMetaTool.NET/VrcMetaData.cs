@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace KoyashiroKohaku.VrcMetaTool
+namespace Koyashiro.VrcMetaTool
 {
     /// <summary>
     /// VrcMetaData

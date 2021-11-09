@@ -1,7 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace KoyashiroKohaku.VrcMetaTool
+namespace Koyashiro.VrcMetaTool
 {
     /// <summary>
     /// User

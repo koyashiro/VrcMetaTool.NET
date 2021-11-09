@@ -1,11 +1,11 @@
-using KoyashiroKohaku.VrcMetaTool.Properties;
+using Koyashiro.VrcMetaTool.Properties;
 using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace KoyashiroKohaku.VrcMetaTool
+namespace Koyashiro.VrcMetaTool
 {
     /// <summary>
     /// VrcMetaDataReader

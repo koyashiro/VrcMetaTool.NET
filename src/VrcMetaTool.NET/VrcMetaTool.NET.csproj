@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <AssemblyName>VrcMetaTool.NET</AssemblyName>
-    <RootNamespace>KoyashiroKohaku.VrcMetaTool.NET</RootNamespace>
+    <RootNamespace>Koyashiro.VrcMetaTool.NET</RootNamespace>
     <TargetFramework>net5.0</TargetFramework>
     <OutputType>Library</OutputType>
     <Nullable>enable</Nullable>
