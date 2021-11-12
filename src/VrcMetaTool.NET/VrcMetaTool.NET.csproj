@@ -3,7 +3,7 @@
   <PropertyGroup>
     <AssemblyName>VrcMetaTool.NET</AssemblyName>
     <RootNamespace>Koyashiro.VrcMetaTool.NET</RootNamespace>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <OutputType>Library</OutputType>
     <Nullable>enable</Nullable>
     <PackageId>VrcMetaTool.NET</PackageId>
@@ -15,13 +15,12 @@
     <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>none</DebugType>
-    <DebugSymbols>false</DebugSymbols>
-  </PropertyGroup>
-
   <PropertyGroup>
     <AnalysisMode>AllEnabledByDefault</AnalysisMode>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="PngChunkUtil" Version="1.0.0" />
+  </ItemGroup>
 
 </Project>
