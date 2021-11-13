@@ -10,7 +10,7 @@ namespace Koyashiro.VrcMetaTool
     {
         public User(string userName)
         {
-            if (userName == null)
+            if (userName is null)
             {
                 throw new ArgumentNullException(nameof(userName));
             }

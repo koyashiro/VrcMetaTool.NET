@@ -32,11 +32,6 @@ namespace Koyashiro.VrcMetaTool
         /// <returns></returns>
         public static bool IsVrcMetaChunk(ReadOnlySpan<byte> chunkType)
         {
-            if (chunkType == null)
-            {
-                throw new ArgumentNullException(nameof(chunkType));
-            }
-
             if (chunkType.Length != 4)
             {
                 throw new ArgumentException("invalid chunk type");
@@ -56,17 +51,12 @@ namespace Koyashiro.VrcMetaTool
         /// <returns></returns>
         public static string ConvertToString(ReadOnlySpan<byte> chunkType, Encoding? encoding = null)
         {
-            if (chunkType == null)
-            {
-                throw new ArgumentNullException(nameof(chunkType));
-            }
-
             if (chunkType.Length != 4)
             {
                 throw new ArgumentException("invalid chunk type");
             }
 
-            if (encoding == null)
+            if (encoding is null)
             {
                 encoding = Encoding.UTF8;
             }
